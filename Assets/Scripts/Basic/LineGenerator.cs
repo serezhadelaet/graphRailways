@@ -6,7 +6,8 @@ namespace Basic
     public class LineSpawner : MonoBehaviour
     {
         [SerializeField] private Line _linePrefab;
-        
+
+#if UNITY_EDITOR
         public Line SpawnLine(Node from, Node to)
         {
             var line = PrefabUtility.InstantiatePrefab(_linePrefab) as Line;
@@ -28,5 +29,6 @@ namespace Basic
             var length = (line.From.transform.position - line.To.transform.position).magnitude;
             line.Visual.localScale = new Vector3(line.Visual.localScale.x, length, line.Visual.localScale.z);
         }
+#endif
     }
 }

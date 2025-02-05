@@ -149,12 +149,19 @@ namespace Basic
 
         private void GenerateLine(Node from, Node to)
         {
+#if UNITY_EDITOR
             var line = _lineSpawner.SpawnLine(from, to);
             _nodesPairToLines[(from, to)] = line;
             _lines.Add(line);
+#endif
         }
 
-        private void SetLinePosition(Line line) => _lineSpawner.SetLinePosition(line);
+        private void SetLinePosition(Line line)
+        {
+#if UNITY_EDITOR
+            _lineSpawner.SetLinePosition(line);
+#endif
+        }
 
         private Node GetNodeWithMinDistance(List<Node> nodes, Dictionary<Node, float> distances)
         {

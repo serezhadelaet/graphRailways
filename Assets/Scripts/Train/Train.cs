@@ -74,7 +74,8 @@ namespace Train
                 _gizmosPath.Remove(target);
             }
         }
-
+        
+#if UNITY_EDITOR
         private void OnDrawGizmos()
         {
             if (_gizmosPath.Count == 0)
@@ -83,5 +84,6 @@ namespace Train
                 Handles.DrawDottedLine(_gizmosPath[i].transform.position, _gizmosPath[i + 1].transform.position, 10);
             Handles.DrawDottedLine(transform.position, _gizmosPath[0].transform.position, 10);
         }
+#endif
     }
 }
