@@ -1,22 +1,18 @@
 using System.Collections.Generic;
 using Level;
-using Sirenix.OdinInspector;
-using UnityEditor;
 using UnityEngine;
-using Random = UnityEngine.Random;
 
 namespace Basic
 {
     public class Graph : MonoBehaviour, IGraph
     {
-        [SerializeField] private Node _nodePrefab;
-        [SerializeField] private Line _linePrefab;
         [SerializeField] private List<Node> _nodes;
         [SerializeField] private List<Line> _lines;
+        [SerializeField] private LineSpawner _lineSpawner;
+        
+        private Dictionary<(Node, Node), Line> _nodesPairToLines = new ();
 
-        private Dictionary<(Node, Node), Line> _nodesPairToLines = new Dictionary<(Node, Node), Line>();
-
-        public IReadOnlyList<Node> Nodes => _nodes;
+        public IReadOnlyCollection<Node> Nodes => _nodes;
 
         public void AddNeighbour(Node from, Node to)
         {
@@ -82,7 +78,6 @@ namespace Basic
             return path != null;
         }
         
-        [Button]
         public bool GetPathToBase(Node from, IReadOnlyList<Base> targets, out List<Node> path, float speed)
         {
             CalculatePath(from, out var distances, out var previousNodes);
@@ -154,26 +149,12 @@ namespace Basic
 
         private void GenerateLine(Node from, Node to)
         {
-            var line = PrefabUtility.InstantiatePrefab(_linePrefab) as Line;
-            line.From = from;
-            line.To = to;
-            line.name = $"Line [{from.name}-{to.name}]";
-            line.transform.SetParent(transform);
-            SetLinePosition(line);
+            var line = _lineSpawner.SpawnLine(from, to);
             _nodesPairToLines[(from, to)] = line;
             _lines.Add(line);
         }
 
-        private void SetLinePosition(Line line)
-        {
-            var angle = Mathf.Atan2(line.To.transform.position.y - line.From.transform.position.y,
-                line.To.transform.position.x - line.From.transform.position.x) * Mathf.Rad2Deg - 90;
-            line.Visual.rotation = Quaternion.Euler(new Vector3(0, 0, angle));
-            var pos = (line.From.transform.position + line.To.transform.position) / 2;
-            line.Visual.position = pos;
-            var length = (line.From.transform.position - line.To.transform.position).magnitude;
-            line.Visual.localScale = new Vector3(line.Visual.localScale.x, length, line.Visual.localScale.z);
-        }
+        private void SetLinePosition(Line line) => _lineSpawner.SetLinePosition(line);
 
         private Node GetNodeWithMinDistance(List<Node> nodes, Dictionary<Node, float> distances)
         {
@@ -221,7 +202,6 @@ namespace Basic
                 path.Reverse();
                 return path;
             }
-
             return null;
         }
     }

@@ -9,8 +9,8 @@ namespace Train
     public class TrainManager : MonoBehaviour, ITrainManager
     {
         [SerializeField] private bool _onlyFreeMines;
-        [SerializeField] private List<Base> _bases;
-        [SerializeField] private List<Mine> _mines;
+        private List<Base> _bases = new();
+        private List<Mine> _mines = new();
         
         private IGraph _graph;
         
@@ -18,6 +18,13 @@ namespace Train
         private void Construct(IGraph graph)
         {
             _graph = graph;
+            foreach (var node in _graph.Nodes)
+            {
+                if (node is Base baseNode)
+                    _bases.Add(baseNode);
+                if (node is Mine mine)
+                    _mines.Add(mine);
+            }
         }
         
         public List<Node> GetPath(Node from, Node to)

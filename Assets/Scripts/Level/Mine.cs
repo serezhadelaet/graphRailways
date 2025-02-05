@@ -16,14 +16,8 @@ namespace Level
         
         public bool IsFree { get; private set; } = true;
 
-        public void Reserve()
-        {
-            IsFree = false;
-        }
+        public void Reserve() => IsFree = false;
 
-        public void CompleteMining()
-        {
-            IsFree = true;
-        }
+        public void CompleteMining() => IsFree = true;
     }
 }
